@@ -6,14 +6,12 @@ editar_pessoa,
 remover_pessoas
 )
 
+from database import criar_tabela
+
 from utils import (
-inicializar_arquivo,
 ler_inteiro
 )
 
-ARQUIVO = 'usuarios.json'
-
-inicializar_arquivo(ARQUIVO)
 
 def menu() -> int:
 
@@ -23,6 +21,8 @@ def menu() -> int:
     Returns:
         int: Opção escolhida pelo usuário.
     """
+
+    criar_tabela()
 
     print('-' * 23)
     print('OPÇÕES'.center(23))
@@ -40,15 +40,15 @@ def menu() -> int:
 while True:
     opcao = menu()
     if opcao == 1:
-        cadastrar_pessoas(ARQUIVO)
+        cadastrar_pessoas()
     elif opcao == 2:
-        listar_pessoas(ARQUIVO)
+        listar_pessoas()
     elif opcao == 3:
-        pesquisar_pessoas(ARQUIVO)
+        pesquisar_pessoas()
     elif opcao == 4:
-        editar_pessoa(ARQUIVO)
+        editar_pessoa()
     elif opcao == 5:
-        remover_pessoas(ARQUIVO)
+        remover_pessoas()
     elif opcao == 6:
         print('Opção 6 selecionada')
         print('Saindo...')

@@ -1,22 +1,21 @@
 from utils import (
-    carregar_dados,
-    salvar_dados,
-    ler_inteiro, validar_email, validar_celular, validar_nome, escolher_cadastro, dados_usuario, buscar_pessoas
+    ler_inteiro, validar_email, validar_celular, validar_nome, escolher_cadastro, dados_usuario,
+    interrupcao_sistema
 )
 
 
-def cadastrar_pessoas(nome_arquivo: str) -> None:
+from database import (
+    inserir_usuario, listar_usuarios, buscar_pessoas_db, atualizar_usuario, deletar_usuario
+)
+
+def cadastrar_pessoas() -> None:
 
     """
-    Realiza o cadastro de um novo usuário.
+    Realiza o cadastro de um novo usuario.
 
-    Solicita nome, celular e e-mail do usuário,
+    Solicita nome, celular e e-mail do usuario,
     valida os dados informados e salva o cadastro
-    no arquivo JSON.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON
-        utilizado para armazenar os dados.
+    no banco de dados SQLite.
     """
 
     nome = validar_nome('Nome:')
@@ -25,35 +24,22 @@ def cadastrar_pessoas(nome_arquivo: str) -> None:
 
     email = validar_email('E-mail:')
 
-    pessoa = {"Nome": nome, "Celular": celular, "E-mail": email}
-
-    dados = carregar_dados(nome_arquivo)
-
-    dados.append(pessoa)
-
-    salvar_dados(nome_arquivo, dados)
+    inserir_usuario(nome, celular, email)
 
     print('Cadastro realizado com sucesso!')
 
 
 
-def listar_pessoas(nome_arquivo: str) -> None:
+def listar_pessoas() -> None:
 
     """
-    Exibe a lista de usuários cadastrados.
+    Lista os usuários cadastrados no sistema.
 
-    Carrega os dados do arquivo JSON e mostra
-    os usuários cadastrados em ordem alfabética.
-
-    Permite selecionar um cadastro para visualizar
-    os dados do usuário.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON
-        utilizado para armazenar os dados.
+    Recupera os dados do banco de dados e,
+    se existirem registros, exibe os usuários.
     """
 
-    dados = carregar_dados(nome_arquivo)
+    dados = listar_usuarios()
 
     pessoa_escolhida = escolher_cadastro(dados)
 
@@ -61,24 +47,21 @@ def listar_pessoas(nome_arquivo: str) -> None:
         dados_usuario(pessoa_escolhida)
 
 
-def pesquisar_pessoas(nome_arquivo: str) -> None:
+def pesquisar_pessoas() -> None:
 
     """
-    Pesquisa usuários cadastrados pelo nome.
+    Pesquisa usuários no banco de dados pelo nome e exibe o cadastro selecionado.
 
-    Carrega os dados do arquivo JSON e permite
-    buscar usuários pelo nome completo ou por
-    letras iniciais. Caso existam resultados,
-    exibe os dados do cadastro selecionado.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON
-        utilizado para armazenar os dados.
+    Solicita um termo de busca, consulta o banco SQLite e, se houver resultados,
+    permite selecionar um usuário para visualização.
     """
+    pesquisa = interrupcao_sistema('Digite o nome desejado (ENTER para listar todos): ').strip().lower()
 
-    dados = carregar_dados(nome_arquivo)
+    pessoas = buscar_pessoas_db(pesquisa)
 
-    pessoas = buscar_pessoas(dados)
+    if not pessoas:
+        print('Nenhum cadastro localizado!')
+        return
 
     pessoa_escolhida = escolher_cadastro(pessoas)
 
@@ -86,31 +69,34 @@ def pesquisar_pessoas(nome_arquivo: str) -> None:
         dados_usuario(pessoa_escolhida)
 
 
-def editar_pessoa(nome_arquivo: str) -> None:
+def editar_pessoa() -> None:
 
     """
-    Altera os dados de um cadastro existente.
+    Permite editar um cadastro existente no banco de dados.
 
-    Carrega os usuários armazenados no arquivo JSON,
-    permite pesquisar um cadastro e exibe opções
-    para editar nome, celular ou e-mail.
+    O usuário pode pesquisar uma pessoa pelo nome,
+    selecionar um registro e alterar nome, celular ou e-mail.
 
-    Após a alteração, os dados atualizados são
-    salvos no arquivo JSON.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON
-        utilizado para armazenar os dados.
+    As alterações são persistidas diretamente no banco de dados
+    através da função atualizar_usuario().
     """
 
-    dados = carregar_dados(nome_arquivo)
+    pesquisa = interrupcao_sistema('Digite o nome desejado (ENTER para listar todos): ').strip().lower()
 
-    pessoas = buscar_pessoas(dados)
+    pessoas = buscar_pessoas_db(pesquisa)
+
+    if not pessoas:
+        print('Nenhum cadastro localizado!')
+        return
 
     pessoa_escolhida = escolher_cadastro(pessoas)
 
     if not pessoa_escolhida:
         return
+
+    nome = pessoa_escolhida['nome']
+    email = pessoa_escolhida['email']
+    celular = pessoa_escolhida['celular']
 
     while True:
         print('-' * 23)
@@ -123,54 +109,49 @@ def editar_pessoa(nome_arquivo: str) -> None:
         print('4 - Finalizar')
         print('-' * 23)
 
-        opcao_edicao = ler_inteiro('Qual dado deseja alterar?')
+        while True:
+            ...
+            opcao_edicao = ler_inteiro('Qual dado deseja alterar?')
 
-        if opcao_edicao == 0:
-            return
+            if opcao_edicao == 0:
+                return
 
-        elif opcao_edicao == 1:
-            pessoa_escolhida['Nome'] = validar_nome('Novo nome: ')
+            elif opcao_edicao == 1:
+                nome = validar_nome('Novo nome: ')
 
-        elif opcao_edicao == 2:
-            pessoa_escolhida['Celular'] = validar_celular('Novo celular: ')
+            elif opcao_edicao == 2:
+                celular = validar_celular('Novo celular: ')
 
-        elif opcao_edicao == 3:
-            pessoa_escolhida['E-mail'] = validar_email('Novo E-mail:')
+            elif opcao_edicao == 3:
+                email = validar_email('Novo E-mail: ')
 
-        elif opcao_edicao == 4:
-            salvar_dados(nome_arquivo, dados)
-
-            print('Alteração realizada com sucesso!')
-            break
-
-        else:
-            print('Opção inválida, tente novamente!')
+            elif opcao_edicao == 4:
+                atualizar_usuario(pessoa_escolhida['id'], nome, email, celular)
+                print('Alteração realizada com sucesso!')
+                return
 
 
-def remover_pessoas(nome_arquivo: str) -> None:
+def remover_pessoas() -> None:
 
     """
-    Remove um usuário da lista de cadastros.
+    Remove um usuário cadastrado no banco de dados.
 
-    Carrega os dados do arquivo JSON, permite
-    pesquisar usuários cadastrados e selecionar
-    um cadastro para exclusão.
+    Permite pesquisar usuários pelo nome ou listar todos,
+    selecionar um cadastro e confirmar a exclusão.
 
-    Após a seleção, exibe uma confirmação para
-    remover ou cancelar a exclusão do cadastro.
+    Após confirmação, o usuário é removido do banco de dados.
 
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON
-        utilizado para armazenar os dados.
+    Returns:
+        None
     """
 
-    dados = carregar_dados(nome_arquivo)
+    pesquisa = interrupcao_sistema('Digite o nome desejado (ENTER para listar todos): ').strip().lower()
 
-    pessoas = buscar_pessoas(dados)
+    pessoas = buscar_pessoas_db(pesquisa)
 
     pessoa_escolhida = escolher_cadastro(pessoas)
 
-    if pessoa_escolhida is None:
+    if not pessoa_escolhida:
         return
 
     while True:
@@ -185,9 +166,7 @@ def remover_pessoas(nome_arquivo: str) -> None:
 
         if confirmacao == 1:
 
-            dados.remove(pessoa_escolhida)
-
-            salvar_dados(nome_arquivo, dados)
+            deletar_usuario(pessoa_escolhida['id'])
 
             print('Cadastro excluído com sucesso!')
             break

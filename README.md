@@ -4,7 +4,7 @@
 
 Este projeto foi desenvolvido com o objetivo de praticar conceitos fundamentais de Python através da construção de um sistema CRUD (Create, Read, Update e Delete) para gerenciamento de usuários.
 
-Os dados são armazenados em um arquivo JSON, permitindo a persistência das informações entre diferentes execuções do programa.
+Os dados são armazenados em um banco de dados SQLite, permitindo a persistência das informações entre diferentes execuções do programa.
 
 Durante o desenvolvimento foram aplicados conceitos importantes como modularização, manipulação de arquivos, tratamento de exceções, validações, documentação com docstrings e utilização de type hints.
 
@@ -18,7 +18,7 @@ Durante o desenvolvimento foram aplicados conceitos importantes como modulariza�
 * Visualizar dados de um usuário
 * Editar cadastros existentes
 * Remover usuários
-* Armazenamento em arquivo JSON
+* Armazenamento em banco de dados SQLite
 * Validação de nome, celular e e-mail
 * Tratamento de erros e exceções
 
@@ -27,8 +27,9 @@ Durante o desenvolvimento foram aplicados conceitos importantes como modulariza�
 ## Tecnologias Utilizadas
 
 * Python 3
-* JSON
+* SQLite3 (banco de dados)
 * Biblioteca padrão do Python
+* Biblioteca sqlite3
 
 ---
 
@@ -40,7 +41,8 @@ crud-usuarios-python/
 ├── main.py
 ├── crud.py
 ├── utils.py
-├── usuarios.json
+├── database.py
+├── crud.db
 └── README.md
 ```
 
@@ -56,6 +58,11 @@ crud-usuarios-python/
 * Contém as operações principais do CRUD.
 * Cadastro, listagem, pesquisa, edição e remoção de usuários.
 
+**database.py**
+
+* Responsável pela conexão com o banco de dados SQLite.
+* Contém a criação de tabelas e funções base de acesso ao banco.
+
 **utils.py**
 
 * Contém funções auxiliares de validação, manipulação de arquivos, busca, seleção e exibição de dados.
@@ -68,8 +75,7 @@ crud-usuarios-python/
 * Modularização
 * Estruturas condicionais
 * Estruturas de repetição
-* Manipulação de arquivos
-* Manipulação de JSON
+* Manipulação de banco de dados (SQLite)
 * Tratamento de exceções
 * Docstrings
 * Type Hints
@@ -102,17 +108,18 @@ python main.py
 
 ## Objetivo
 
-Este projeto foi desenvolvido como parte da minha jornada de aprendizado em desenvolvimento de software, com foco na prática dos fundamentos da linguagem Python e na construção de aplicações organizadas e bem documentadas.
+O sistema evoluiu ao longo do desenvolvimento, migrando de armazenamento em arquivos JSON para um banco de dados SQLite, com o objetivo de praticar conceitos mais próximos de aplicações reais.
 
 ---
 
 ## Melhorias Futuras
 
 * Implementar testes automatizados
-* Utilizar banco de dados em vez de arquivo JSON
 * Criar interface gráfica
 * Desenvolver versão web da aplicação
 * Melhorar sistema de busca e filtros
+* Aplicar arquitetura orientada a objetos (OOP)
+* Criar API REST com Flask ou FastAPI
 
 ---
 

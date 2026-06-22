@@ -1,8 +1,3 @@
-import os
-import json
-from json import JSONDecodeError
-
-
 # ==========================
 # ENTRADA E INTERAÇÃO
 # ==========================
@@ -174,112 +169,8 @@ def validar_email(mensagem: str) -> str:
 
 
 # ==========================
-# ARQUIVOS E JSON
-# ==========================
-
-
-def inicializar_arquivo(nome_arquivo: str) -> None:
-
-    """
-    Inicializa o arquivo JSON do sistema.
-
-    Verifica se o arquivo existe e, caso não exista,
-    cria um novo arquivo JSON vazio para armazenamento
-    dos dados.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON.
-    """
-
-    if not os.path.exists(nome_arquivo):
-        with open(nome_arquivo, 'w', encoding='utf-8') as arquivo:
-            json.dump([], arquivo, ensure_ascii=False, indent=4)
-        print(f'Arquivo {nome_arquivo} criado com sucesso!')
-
-
-def carregar_dados(nome_arquivo: str) -> list[dict[str, str]]:
-
-    """
-    Carrega os dados armazenados no arquivo JSON.
-
-    Verifica se o arquivo existe e retorna
-    os dados cadastrados no sistema.
-
-    Caso o arquivo JSON esteja inválido,
-    retorna uma lista vazia.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON.
-
-    Returns:
-        list[dict[str, str]]: Lista com os dados carregados.
-    """
-
-    dados: list[dict[str, str]] = []
-    if os.path.exists(nome_arquivo):
-        with open(nome_arquivo, 'r', encoding='utf-8') as arquivo:
-            try:
-                dados = json.load(arquivo)
-            except JSONDecodeError as erro:
-                print(f'JSON inválido: {erro}')
-                dados = []
-    return dados
-
-
-def salvar_dados(nome_arquivo: str, dados: list[dict[str, str]]) -> None:
-
-    """
-    Salva os dados no arquivo JSON.
-
-    Sobrescreve o conteúdo do arquivo com
-    os dados informados.
-
-    Args:
-        nome_arquivo (str): Nome do arquivo JSON.
-
-        dados (list[dict[str, str]]): Lista de usuários
-        cadastrados.
-    """
-
-    with open(nome_arquivo, 'w', encoding='utf-8') as arquivo:
-        json.dump(dados, arquivo, ensure_ascii=False, indent=4)
-
-
-# ==========================
 # BUSCA E SELEÇÃO
 # ==========================
-
-
-def buscar_pessoas(dados: list[dict[str, str]]) -> list[dict[str, str]]:
-
-    """
-    Busca usuários cadastrados pelo nome.
-
-    Permite pesquisar usuários pelo nome completo
-    ou por letras iniciais e retorna os resultados
-    encontrados.
-
-    Args:
-        dados (list[dict[str, str]]): Lista de usuários cadastrados.
-
-    Returns:
-        list: Lista com os usuários encontrados.
-    """
-
-    if not dados:
-        print('Nenhum cadastro encontrado')
-        return []
-
-    pesquisa = interrupcao_sistema('Digite o nome desejado (ENTER para listar todos): ').strip().lower()
-    resultados = []
-
-    for pessoa in dados:
-        nome_pessoa = pessoa.get('Nome', '').lower()
-
-        if pesquisa in nome_pessoa:
-            resultados.append(pessoa)
-
-    return resultados
 
 
 def listar_nomes(pessoas: list[dict[str, str]]) -> None:
@@ -299,12 +190,12 @@ def listar_nomes(pessoas: list[dict[str, str]]) -> None:
     print('0 - Voltar')
 
     for indice, pessoa in enumerate(pessoas):
-        print(f'{indice + 1} - {pessoa["Nome"]}')
+        print(f'{indice + 1} - {pessoa["nome"]}')
 
     print('-' * 23)
 
 
-def escolher_cadastro(pessoas: list[dict[str, str]]) -> dict[str, str] | None:
+def escolher_cadastro(pessoas: list[dict]) -> dict | None:
 
     """
     Permite selecionar um usuário cadastrado.
@@ -313,7 +204,7 @@ def escolher_cadastro(pessoas: list[dict[str, str]]) -> dict[str, str] | None:
     solicita ao usuário a escolha de um cadastro.
 
     Returns:
-        dict[str, str] | None: Retorna o cadastro selecionado
+        dict | None: Retorna o cadastro selecionado
         ou None caso a operação seja cancelada.
     """
 
@@ -321,7 +212,7 @@ def escolher_cadastro(pessoas: list[dict[str, str]]) -> dict[str, str] | None:
         print('Nenhum cadastro encontrado!')
         return None
 
-    pessoas_ordenadas = sorted(pessoas, key=lambda pessoa: pessoa['Nome'].lower())
+    pessoas_ordenadas = sorted(pessoas, key=lambda pessoa: pessoa['nome'].lower())
 
     listar_nomes(pessoas_ordenadas)
 
@@ -342,7 +233,7 @@ def escolher_cadastro(pessoas: list[dict[str, str]]) -> dict[str, str] | None:
 # ==========================
 
 
-def dados_usuario(pessoa: dict[str, str]) -> None:
+def dados_usuario(pessoa) -> None:
 
     """
     Exibe os dados de um usuário cadastrado.
@@ -351,11 +242,11 @@ def dados_usuario(pessoa: dict[str, str]) -> None:
     selecionado.
 
     Args:
-        pessoa (dict[str, str]): Dados do usuário selecionado.
+        pessoa (dict): Dados do usuário selecionado.
     """
 
     print("USUÁRIO".center(30, "-"))
-    print(f"Nome: {pessoa['Nome']}")
-    print(f"Celular: {pessoa['Celular']}")
-    print(f"E-mail: {pessoa['E-mail']}")
+    print(f"Nome: {pessoa['nome']}")
+    print(f"Celular: {pessoa['celular']}")
+    print(f"E-mail: {pessoa['email']}")
     print('-' * 30)
