@@ -1,5 +1,11 @@
 # CRUD de Usuários em Python
 
+## Demonstração
+
+![Menu do sistema](print-menu.png)
+
+![Demo do CRUD funcionando](demo.gif)
+
 ## Sobre o Projeto
 
 Este projeto foi desenvolvido com o objetivo de praticar conceitos fundamentais de Python através da construção de um sistema CRUD (Create, Read, Update e Delete) para gerenciamento de usuários.
